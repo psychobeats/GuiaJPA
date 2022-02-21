@@ -109,7 +109,7 @@ public class LibroServicio {
         System.out.println("INGRESE EL ISBN DEL LIBRO A BUSCAR");
         Long isbn = leer.nextLong();
 
-        List<Libro> libros = em.createQuery("SELECT l FROM Libro l WHERE l.isbn = :" + isbn).getResultList();
+        List<Libro> libros = em.createQuery("SELECT l FROM Libro l WHERE l.isbn = :isbn").setParameter("isbn", isbn).getResultList();
 
         if (libros.isEmpty()) {
             System.out.println("NO HAY LIBROS CON ESE ISBN");
@@ -123,15 +123,19 @@ public class LibroServicio {
     //10) Búsqueda de un libro por Título
     public static void busquedaPorTitulo() {
         EntityManager em = Persistence.createEntityManagerFactory("LibreriaPU").createEntityManager();
+        try{
         System.out.println("INGRESE EL TITULO DEL LIBRO A BUSCAR");
         String titulo = leer.next();
 
-        List<Libro> libros = em.createQuery("SELECT l FROM Libro l WHERE l.titulo LIKE :" + titulo).getResultList();
+        List<Libro> libros = em.createQuery("SELECT l FROM Libro l WHERE l.titulo LIKE :titulo").setParameter("titulo", titulo).getResultList();
         if (libros.isEmpty()) {
             System.out.println("LISTA DE LIBROS VACIA");
         }
         for (Libro i : libros) {
             System.out.println(i);
+        }
+        }catch(Exception e){
+            throw e;
         }
     }
 
@@ -141,7 +145,7 @@ public class LibroServicio {
         System.out.println("INGRESE EL NOMBRE DEL AUTOR DEL LIBRO A BUSCAR");
         String nombreAutor = leer.next();
 
-        List<Libro> libros = em.createQuery("SELECT l FROM Libro l WHERE l.autor.nombre LIKE :" + nombreAutor).getResultList();
+        List<Libro> libros = em.createQuery("SELECT l FROM Libro l WHERE l.autor.nombre LIKE :nombreAutor").setParameter("nombreAutor", nombreAutor).getResultList();
         if (libros.isEmpty()) {
             System.out.println("NO HAY LIBROS CON ESE AUTOR");
         }
@@ -156,7 +160,7 @@ public class LibroServicio {
         System.out.println("INGRESE EL NOMBRE DE LA EDITORIAL DEL LIBRO A BUSCAR");
         String nombreEditorial = leer.next();
 
-        List<Libro> libros = em.createQuery("SELECT l FROM Libro l WHERE l.editorial.nombre :" + nombreEditorial).getResultList();
+        List<Libro> libros = em.createQuery("SELECT l FROM Libro l WHERE l.editorial.nombre :nombreEditorial").setParameter("nombreEditorial", nombreEditorial).getResultList();
         if (libros.isEmpty()) {
             System.out.println("NO HAY LIBROS CON ESA EDITORIAL");
         }

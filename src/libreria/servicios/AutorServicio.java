@@ -77,7 +77,7 @@ public class AutorServicio {
         try {
             System.out.println("INGRESE EL NOMBRE DEL AUTOR A BUSCAR");
             String nombre = leer.next();
-            List<Autor> autores = em.createQuery("SELECT a FROM Autor a WHERE a.nombre LIKE :" + nombre).getResultList(); //setParameter("nombre",nombre);
+            List<Autor> autores = em.createQuery("SELECT a FROM Autor a WHERE a.nombre LIKE :nombre").setParameter("nombre", nombre).getResultList(); //setParameter("nombre",nombre);
             if (autores.isEmpty()) {
                 System.out.println("LISTA DE AUTORES VACIA");
             }
