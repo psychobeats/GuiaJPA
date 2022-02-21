@@ -12,38 +12,49 @@ public class LibroServicio {
 
     static Scanner leer = new Scanner(System.in).useDelimiter("\n");
 
-    public static void crearLibro() {
+    public static void crearLibro() throws Exception {
         EntityManager em = Persistence.createEntityManagerFactory("LibreriaPU").createEntityManager();
-        try{
-        Libro libro = new Libro();
-        System.out.println("Ingrese el nombre del titulo");
-        libro.setTitulo(leer.next());
-        System.out.println("Ingrese año");
-        libro.setAnio(leer.nextInt());
-        System.out.println("Cantidad de ejemplares?");
-        libro.setEjemplares(leer.nextInt());
-        libro.setEjemplaresRestantes(libro.getEjemplares());
-        libro.setEjemplaresPrestados(0);
+        try {
+            Libro libro = new Libro();
+            System.out.println("Ingrese el nombre del titulo");
+            libro.setTitulo(leer.next());
+            System.out.println("Ingrese año");
+            libro.setAnio(leer.nextInt());
+            System.out.println("Cantidad de ejemplares?");
+            libro.setEjemplares(leer.nextInt());
+            libro.setEjemplaresRestantes(libro.getEjemplares());
+            libro.setEjemplaresPrestados(0);
 
-        System.out.println("Ingrese el ID del autor");
-        Autor autor = em.find(Autor.class, leer.nextInt());
-        libro.setAutor(autor);
+            System.out.println("Ingrese el ID del autor");
+            Autor autor = em.find(Autor.class, leer.nextInt());
 
-        System.out.println("Ingrese el ID de la editorial");
-        Editorial e = em.find(Editorial.class, leer.nextInt());
-        libro.setEditorial(e);
+            if (autor != null) {
+                System.out.println(autor);
+                libro.setAutor(autor);
+            } else {
+                throw new Exception("NO EXISTE UNA ID PARA ESE AUTOR");
+            }
 
-        System.out.println("LIBRO GUARDADO CORRECTAMENTE");
+            System.out.println("Ingrese el ID de la editorial");
+            Editorial e = em.find(Editorial.class, leer.nextInt());
+            
+            if (e != null) {
+                libro.setEditorial(e);
+            } else {
+                throw new Exception("NO EXISTE UNA ID DE ESA EDITORIAL");
+            }
 
-        em.getTransaction().begin();
-        em.persist(libro);
-        em.getTransaction().commit();
-        }catch(Exception e){
+            System.out.println("LIBRO GUARDADO CORRECTAMENTE");
+
+            em.getTransaction().begin();
+            em.persist(libro);
+            em.getTransaction().commit();
+        } catch (Exception e) {
             throw e;
         }
     }
 
-    public static void modificarLibroPorId() {
+    public static void modificarLibroPorId() throws Exception {
         EntityManager em = Persistence.createEntityManagerFactory("LibreriaPU").createEntityManager();
 
         try {
@@ -68,15 +79,27 @@ public class LibroServicio {
 
             System.out.println("Ingrese el ID del autor");
             Autor autor = em.find(Autor.class, leer.nextInt());
-            libro.setAutor(autor);
-
+            
+            if (autor != null) {
+                System.out.println(autor);
+                libro.setAutor(autor);
+            } else {
+                System.out.println(autor);
+                throw new Exception("NO EXISTE UNA ID PARA ESE AUTOR");
+            }
             System.out.println("Ingrese el ID de la editorial");
             Editorial e = em.find(Editorial.class, leer.nextInt());
-            libro.setEditorial(e);
+            if (e != null) {
+                libro.setEditorial(e);
+            } else {
+                throw new Exception("NO EXISTE UNA ID DE ESA EDITORIAL");
+            }
 
             em.getTransaction().begin();
             em.merge(libro);
             em.getTransaction().commit();
+            System.out.println("LIBRO MODIFICADO CORRECTAMENTE");
+            
         } catch (Exception e) {
             throw e;
         }
@@ -123,18 +146,18 @@ public class LibroServicio {
     //10) Búsqueda de un libro por Título
     public static void busquedaPorTitulo() {
         EntityManager em = Persistence.createEntityManagerFactory("LibreriaPU").createEntityManager();
-        try{
-        System.out.println("INGRESE EL TITULO DEL LIBRO A BUSCAR");
-        String titulo = leer.next();
+        try {
+            System.out.println("INGRESE EL TITULO DEL LIBRO A BUSCAR");
+            String titulo = leer.next();
 
-        List<Libro> libros = em.createQuery("SELECT l FROM Libro l WHERE l.titulo LIKE :titulo").setParameter("titulo", titulo).getResultList();
-        if (libros.isEmpty()) {
-            System.out.println("LISTA DE LIBROS VACIA");
-        }
-        for (Libro i : libros) {
-            System.out.println(i);
-        }
-        }catch(Exception e){
+            List<Libro> libros = em.createQuery("SELECT l FROM Libro l WHERE l.titulo LIKE :titulo").setParameter("titulo", titulo).getResultList();
+            if (libros.isEmpty()) {
+                System.out.println("LISTA DE LIBROS VACIA");
+            }
+            for (Libro i : libros) {
+                System.out.println(i);
+            }
+        } catch (Exception e) {
             throw e;
         }
     }
@@ -145,7 +168,9 @@ public class LibroServicio {
         System.out.println("INGRESE EL NOMBRE DEL AUTOR DEL LIBRO A BUSCAR");
         String nombreAutor = leer.next();
 
-        List<Libro> libros = em.createQuery("SELECT l FROM Libro l WHERE l.autor.nombre LIKE :nombreAutor").setParameter("nombreAutor", nombreAutor).getResultList();
+        List<Libro> libros = em.createQuery("SELECT l FROM Libro l WHERE l.autor.nombre LIKE :nombreAutor")
+                .setParameter("nombreAutor", nombreAutor)
+                .getResultList();
         if (libros.isEmpty()) {
             System.out.println("NO HAY LIBROS CON ESE AUTOR");
         }
@@ -163,6 +188,18 @@ public class LibroServicio {
         List<Libro> libros = em.createQuery("SELECT l FROM Libro l WHERE l.editorial.nombre :nombreEditorial").setParameter("nombreEditorial", nombreEditorial).getResultList();
         if (libros.isEmpty()) {
             System.out.println("NO HAY LIBROS CON ESA EDITORIAL");
+        }
+        for (Libro i : libros) {
+            System.out.println(i);
+        }
+    }
+
+    public static void verTodosLosLibros() {
+        EntityManager em = Persistence.createEntityManagerFactory("LibreriaPU").createEntityManager();
+       
+        List<Libro> libros = em.createQuery("SELECT l FROM Libro l").getResultList();
+        if (libros.isEmpty()) {
+            System.out.println("NO HAY LIBROS");
         }
         for (Libro i : libros) {
             System.out.println(i);

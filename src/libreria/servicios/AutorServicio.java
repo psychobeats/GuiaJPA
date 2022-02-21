@@ -17,9 +17,7 @@ public class AutorServicio {
             Autor autor = new Autor();
             System.out.println("Ingrese el nombre del autor");
             autor.setNombre(leer.next());
-
             System.out.println("AUTOR AGREGADO EXITOSAMENTE");
-
             em.getTransaction().begin();
             em.persist(autor); //graba
             em.getTransaction().commit();

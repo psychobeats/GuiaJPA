@@ -34,7 +34,8 @@ public class Main {
             System.out.println("12 - Búsqueda de un libro por Título");
             System.out.println("13 - Búsqueda de un libro/s por nombre de Autor");
             System.out.println("14 - Búsqueda de un libro/s por nombre de Editorial");
-            System.out.println("15 - SALIR");
+            System.out.println("15 - Listar TODOS los libros");
+            System.out.println("16 - SALIR");
             opcion = leer.nextInt();
             switch (opcion) {
                 case 1:
@@ -79,12 +80,15 @@ public class Main {
                 case 14:
                     LibroServicio.busquedaPorNombreEditorial();
                     break;
+                case 15:
+                    LibroServicio.verTodosLosLibros();
+                    break;
                 default:
                     System.out.println("GRACIAS POR USAR EL SISTEMA");
                     return;
             }
-            limpiar();
-        } while (opcion <= 14);
+            //limpiar();
+        } while (opcion <= 15);
          
     }
     
